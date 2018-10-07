@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\URL;
 	<head>
 		<meta charset="UTF-8">
         <meta name="author" content="order by dede58.com"/>
-		<title>会员登录</title>
+		<title>邮箱登录</title>
 		<link rel="stylesheet" type="text/css" href="{{URL::asset('/css/login.css')}}">
 		<script src="{{URL::asset('/js/app.js')}}"></script>
 	</head>
@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\URL;
 			<div class="login_center">
 				<div class="login_top">
 					<input type="hidden" name="_token" id="_token" value="{{csrf_token()}}">
-					<div class="left fl">会员登录</div>
+					<div class="left fl">邮箱登录</div>
 					<div class="right fr">您还不是我们的会员？<a href="register" target="_self">立即注册</a></div>
 					<div class="clear"></div>
 					<div class="xian center"></div>
@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\URL;
 				<div class="login_submit">
 					<input class="submit" type="submit" name="submit" value="立即登录" >
 				</div>
+				<a href="tel_login" target="_self" style="color: red;font-weight: bolder;">手机号登录</a></div>
 			</div>
 		</div>
 		</form>
@@ -65,7 +66,7 @@ $(function () {
 		$.ajax({
 			url:'verify',
 			type:"POST",
-			data:{_token:token,captcha,username:username,pwd:password},
+			data:{_token:token,captcha,email:username,password:password},
 			success:function (msg) {
 			    console.log(msg)
 				if(msg=='error'){
@@ -73,7 +74,7 @@ $(function () {
                     return false;
                 }
                 if(msg=='wrong'){
-                    alert('账号或密码输入错误');
+                    alert('邮箱或密码输入错误');
                     return false;
                 }
                 if(msg=='success'){

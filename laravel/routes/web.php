@@ -41,3 +41,5 @@ Route::get('test','Shop\IndexController@test');
 Route::get('telRegister','Shop\UserController@telRegist');
 //注册表单提交（手机号/邮箱）
 Route::post('register','Shop\UserController@register');
+//手机号登录
+Route::get('tel_login','Shop\UserController@loginByTel');

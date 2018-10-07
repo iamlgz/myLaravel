@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Shop;
 
+use App\Services\UserService;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -39,11 +40,11 @@ class UserController extends Controller
             $volidata=Validator::make($data,$rules);
             if($volidata->fails()){
                 //提示错误跳会注册页面
-                return view('remind.error_remind',['msg'=>'验证码输入错误']);
+                return view('remind.remind',['msg'=>'验证码输入错误']);
             }
             //判断密码是否一致
             if($data['password'] !== $data['repassword']){
-                return view('remind.error_remind',['msg'=>'两次输入的密码不一致']);
+                return view('remind.remind',['msg'=>'两次输入的密码不一致']);
             }
 
             unset($data['repassword']);
@@ -51,9 +52,12 @@ class UserController extends Controller
             $data['password'] = md5($data['password']);
             //判断是否是邮箱注册
             if(isset($data['email'])){
-                Job::dispatch()->onQueue('emails');
-            }else{
 
+            }else{
+                $service=new UserService();
+                if($service->register($data)){
+                    return view('remind.remind',['url'=>'login','msg'=>'注册成功']);
+                }
             }
         }
         return view('user.register');
@@ -99,5 +103,13 @@ class UserController extends Controller
     public function telRegist()
     {
         return view('user.tel_register');
+    }
+
+    /*
+     * 通过手机登录
+     * */
+    public function loginByTel()
+    {
+        return view('user.tel_login');
     }
 }

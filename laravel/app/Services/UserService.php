@@ -13,9 +13,20 @@ use App\Models\User;
 
 class UserService
 {
-    public function login()
+    /*
+     * 实例化模型
+     * */
+    public function obj()
     {
         $obj=new User();
-       return $obj->select();
+       return $obj;
+    }
+
+    /*
+     * 注册
+     * */
+    public function register($data)
+    {
+        return $this->obj()->insert($data);
     }
 }

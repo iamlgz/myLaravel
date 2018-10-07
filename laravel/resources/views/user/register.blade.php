@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\URL;
 					</div>
 				</div>
 				<div class="regist_submit">
-					<input class="submit" type="submit" name="submit" value="立即注册" >
+					<button class="submit">立即注册</button>
 				</div>
 			</div>
 		</div>

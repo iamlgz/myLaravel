@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\URL;
 					</div>
 				</div>
 				<div class="regist_submit">
-					<input class="submit" type="submit" name="submit" value="立即注册" >
+					<button class="submit">立即注册</button>
 				</div>
 			</div>
 		</div>
@@ -50,7 +50,7 @@ use Illuminate\Support\Facades\URL;
             var captcha=$("#captcha").val()
             var username=$("#username").val()
 
-			var reg=/^(133|159|185|199|132)\d{8}$/;
+			var reg=/^(133|159|185|199|132|176)\d{8}$/;
 
             if(!reg.test(username)){
                 alert('手机号格式不正确');
