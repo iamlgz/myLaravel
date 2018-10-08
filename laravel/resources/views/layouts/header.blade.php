@@ -9,7 +9,7 @@
         <div class="top center">
             <div class="left fl">
                 <ul>
-                    <li><a href="http://www.mi.com/" target="_blank">小米商城</a></li>
+                    <li><a href="index" target="_blank">小米商城</a></li>
                     <li>|</li>
                     <li><a href="">MIUI</a></li>
                     <li>|</li>
@@ -35,10 +35,15 @@
                 <div class="gouwuche fr"><a href="cart">购物车</a></div>
                 <div class="fr">
                     <ul>
+                        @if(empty(session('username')))
                         <li><a href="login" target="_blank">登录</a></li>
                         <li>|</li>
                         <li><a href="register" target="_blank" >注册</a></li>
                         <li>|</li>
+                        @else
+                            <li><a href="selfinfo" target="_blank" >{{session('username')}}</a></li>
+                            <li>|</li>
+                        @endif
                         <li><a href="">消息通知</a></li>
                     </ul>
                 </div>

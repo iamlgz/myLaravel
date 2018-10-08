@@ -9,7 +9,8 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
-use App\Services\UserService;
+use App\Services\IndexService;
+use Illuminate\Support\Facades\Mail;
 
 class IndexController extends Controller
 {
@@ -18,6 +19,8 @@ class IndexController extends Controller
      * */
     public function index()
     {
+        $service = new IndexService();
+        $service->getGoods();
         return view('index.index');
     }
 
@@ -46,11 +49,12 @@ class IndexController extends Controller
     }
 
     /*
-     * redis测试
+     * 测试
      * */
     public function test()
     {
-        $obj=new UserService();
-        var_dump($obj->login());
+        Mail::send('user.login',['name'=>'iamlgz'],function ($message){
+            $message->to('1436887468@qq.com')->subject('测试');
+        });
     }
 }

@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\URL;
         <a href="index" target="_blank"><img src="{{URL::asset('/image/mistore_logo.png')}}" alt=""></a>
     </div>
 </div>
-<form  method="post" action="login" class="form center" id="sub">
+<form  method="post" action="verify" class="form center" id="sub">
     <div class="login">
         <div class="login_center">
             <div class="login_top">
@@ -28,16 +28,16 @@ use Illuminate\Support\Facades\URL;
                 <div class="xian center"></div>
             </div>
             <div class="login_main center">
-                <div class="username">用户名:&nbsp;<input class="shurukuang" type="text" id="username" placeholder="请输入你的用户名"/></div>
-                <div class="username">密&nbsp;&nbsp;&nbsp;&nbsp;码:&nbsp;<input class="shurukuang" type="password" id="password" placeholder="请输入你的密码"/></div>
+                <div class="username">手机号:&nbsp;<input class="shurukuang" type="tel" name="tel" placeholder="请输入你的手机号"/></div>
+                <div class="username">密&nbsp;&nbsp;&nbsp;&nbsp;码:&nbsp;<input class="shurukuang" type="password" name="password" placeholder="请输入你的密码"/></div>
                 <div class="username">
-                    <div class="left fl">验证码:&nbsp;<input class="yanzhengma" type="text" id="captcha" placeholder="请输入验证码"/></div>
+                    <div class="left fl">验证码:&nbsp;<input class="yanzhengma" type="text" name="captcha" placeholder="请输入验证码"/></div>
                     <div class="right fl"><img src="{{captcha_src()}}" onclick="this.src='http://www.laravel.com/index.php/captcha/default?'+Math.random()"></div>
                     <div class="clear"></div>
                 </div>
             </div>
             <div class="login_submit">
-                <input class="submit" type="submit" name="submit" value="立即登录" >
+                <button class="submit">立即登录</button>
             </div>
             <a href="login" target="_self" style="color: red;font-weight: bolder;">邮箱登录</a></div>
         </div>
@@ -50,38 +50,3 @@ use Illuminate\Support\Facades\URL;
 </footer>
 </body>
 </html>
-
-<script>
-    $(function () {
-        $('#sub').submit(function () {
-            var captcha=$('#captcha').val();
-            var token=$('#_token').val();
-            var username=$('#username').val();
-            var password=$('#password').val();
-            if(captcha==''){
-                alert('请输入验证码');
-                return false;
-            }
-            $.ajax({
-                url:'verify',
-                type:"POST",
-                data:{_token:token,captcha,tel:username,password:password},
-                success:function (msg) {
-                    console.log(msg)
-                    if(msg=='error'){
-                        alert('验证码输入错误');
-                        return false;
-                    }
-                    if(msg=='wrong'){
-                        alert('手机号或密码输入错误');
-                        return false;
-                    }
-                    if(msg=='success'){
-                        location.href='index';
-                    }
-                }
-            })
-            return false;
-        })
-    })
-</script>

@@ -33,8 +33,6 @@ Route::get('order','Shop\UserController@orderForGoods');
 Route::get('register','Shop\UserController@register');
 //登陆验证码验证
 Route::post('verify','Shop\UserController@verify');
-//登陆提交表单
-Route::post('login','Shop\UserController@login');
 //测试
 Route::get('test','Shop\IndexController@test');
 //手机号注册
@@ -43,3 +41,7 @@ Route::get('telRegister','Shop\UserController@telRegist');
 Route::post('register','Shop\UserController@register');
 //手机号登录
 Route::get('tel_login','Shop\UserController@loginByTel');
+
+//Auth::routes();
+
+//Route::get('/home', 'HomeController@index')->name('home');

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,14 +13,15 @@ class SendReminderEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected $user;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($user)
     {
-        //
+        $this->user=$user;
     }
 
     /**
@@ -27,8 +29,11 @@ class SendReminderEmail implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(Mailer $mailer)
     {
-        //
+        $user = $this->user;
+        $mailer->send('user.login',['user'=>$user],function($message) use ($user){
+            $message->to($user->email)->subject('新功能发布');
+        });
     }
 }
