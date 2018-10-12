@@ -11,25 +11,16 @@ class User extends Model
     /*
      * 用户邮箱注册
      * */
-    public function registerByEmail($data)
+    public function register($data)
     {
-        if(empty($this->where(['email'=>$data['email']])->first())){
-            $data['username']='小米'.microtime(time());
+        if(!empty($data['email'])){
+            $where = ['email'=>$data['email']];
+        }elseif (!empty($data['tel'])){
+            $where = ['tel'=>$data['tel']];
+        }
+        if(empty($this->where($where)->first())){
             $id = $this->insertGetId($data);
             return $this->findOrFail($id);
-        }else{
-            return false;
-        }
-    }
-
-    /*
-     * 用户手机号注册
-     * */
-    public function registerByTel($data)
-    {
-        if(empty($this->where(['tel' => $data['tel']])->first())){
-            $data['username']='小米'.microtime(true);
-            return $this->insert($data);
         }else{
             return false;
         }

@@ -29,8 +29,8 @@ use Illuminate\Support\Facades\URL;
 					<div class="xian center"></div>
 				</div>
 				<div class="login_main center">
-					<div class="username">邮&nbsp;&nbsp;&nbsp;&nbsp;箱:&nbsp;<input class="shurukuang" type="email" name="email" placeholder="请输入你的邮箱"/></div>
-					<div class="username">密&nbsp;&nbsp;&nbsp;&nbsp;码:&nbsp;<input class="shurukuang" type="password" name="password" placeholder="请输入你的密码"/></div>
+					<div class="username">账&nbsp;&nbsp;&nbsp;&nbsp;号:&nbsp;<input class="shurukuang" type="text" id="username" name="username" placeholder="请输入你的邮箱"/></div>
+					<div class="username">密&nbsp;&nbsp;&nbsp;&nbsp;码:&nbsp;<input class="shurukuang" type="password" id="password" name="password" placeholder="请输入你的密码"/></div>
 					<div class="username">
 						<div class="left fl">验证码:&nbsp;<input class="yanzhengma" type="text" name="captcha" placeholder="请输入验证码"/></div>
 						<div class="right fl"><img src="{{captcha_src()}}" onclick="this.src='http://www.laravel.com/index.php/captcha/default?'+Math.random()"></div>
@@ -40,7 +40,6 @@ use Illuminate\Support\Facades\URL;
 				<div class="login_submit">
 					<button class="submit">立即登录</button>
 				</div>
-				<a href="tel_login" target="_self" style="color: red;font-weight: bolder;">手机号登录</a></div>
 			</div>
 		</div>
 		</form>
@@ -51,5 +50,23 @@ use Illuminate\Support\Facades\URL;
 		</footer>
 	</body>
 </html>
-
 <script>
+	$(".form").submit(function () {
+	    var username = $("#username").val();
+	    var pwd = $("#password").val();
+		var preg = /^\w+@\w+\.(com|cn|net)$/;
+		var other = /^(159|132|133|156|199|136)\d{8}$/;
+		if(preg.test(username) || other.test(username)){
+		    return true;
+		}else{
+		    alert('账号格式不正确');
+		    return false;
+		}
+
+		if(pwd == ''){
+		    alert('密码不能为空');
+		    return false;
+		}
+
+    })
+</script>

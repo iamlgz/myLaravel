@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/','Shop\IndexController@index');
 
 //商城首页
 Route::get('index','Shop\IndexController@index');
@@ -41,7 +39,8 @@ Route::get('telRegister','Shop\UserController@telRegist');
 Route::post('register','Shop\UserController@register');
 //手机号登录
 Route::get('tel_login','Shop\UserController@loginByTel');
-
+//退出登录
+Route::get('loginout','Shop\UserController@loginOut');
 //Auth::routes();
 
 //Route::get('/home', 'HomeController@index')->name('home');

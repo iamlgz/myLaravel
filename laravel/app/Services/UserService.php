@@ -8,27 +8,34 @@
 
 namespace App\Services;
 
+use App\Jobs\SendReminderEmail;
 use App\Models\LoginLog;
+use App\Models\Type;
 use App\Models\User;
+use App\Models\Goods;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Support\Facades\Redis;
 
 class UserService
 {
-    /*
-     * 手机号注册
-     * */
-    public function registByTel($data)
-    {
-        $model = new User();
-        return $model->registerByTel($data);
-    }
+    use DispatchesJobs;
+
 
     /*
      * 邮箱注册
      * */
-    public function registByEmail($data)
+    public function register($data)
     {
         $model = new User();
-        return $model->registerByEmail($data);
+        $data['password'] = md5($data['password']);
+        $data['username'] = '小米'.microtime(time());
+        $res=$model->register($data);
+        session(['user' => serialize($res)]);
+        session(['username' => $res->username]);
+        if(!empty($res->email)){
+        $this->dispatch(new SendReminderEmail($res));
+        }
+        return $res;
     }
 
     /*
@@ -37,34 +44,37 @@ class UserService
     public function login($data)
     {
         $model = new User();
+        $data['password'] = md5($data['password']);
         $res=$model->login($data);
         if(empty($res)){
-            return null;
+            return false;
         }else{
             //记录近十次登录地点时间IP
-            $user=$res->toArray();
-            $ip=$this->getIP();
-            $city=$this->getCity($ip);
-            $arr=[
+            $user = $res->toArray();
+            $info = $this->getCityAndIp();
+
+            $arr = [
                 'uid' => $user['id'],
                 'login_at' => time(),
-                'login_ip' => $ip,
-                'login_address' => $city,
-                'login_mode' => $this->isMobile()
+                'login_ip' => $info['ip'],
+                'login_address' => $info['city'],
+                'login_mode' => $this->loginMode()
             ];
             $log=new LoginLog();
             if($log->count($user['id']) == 10){
                 $log->moveMin($user['id']);
             }
-            if($log->add($arr)) return $res;
-
+            $log->add($arr);
+            session(['user'=>serialize($res)]);
+            session(['username'=>$user['username']]);
+            return true;
         }
     }
 
     /*
      * 判断登录方式
      * */
-    public function isMobile()
+    public function loginMode()
     {
         $agent = strtolower($_SERVER['HTTP_USER_AGENT']);
         $is_pc = (strpos($agent, 'windows nt')) ? true : false;
@@ -95,62 +105,59 @@ class UserService
     /*
      * 获取登录IP
      * */
-    public function getIP()
+    public function getCityAndIp()
     {
-        if (isset($_SERVER)) {
-            if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-                    /* 取X-Forwarded-For中第一个非unknown的有效IP字符串 */
-                foreach ($arr AS $ip) {
-                    $ip = trim($ip);
-                    if ($ip != 'unknown') {
-                        $realip = $ip;
-                        break;
-                    }
-                }
-                if(!isset($realip)){
-                    $realip = "0.0.0.0";
-                }
-            } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
-                $realip = $_SERVER['HTTP_CLIENT_IP'];
-            } else {
-                if (isset($_SERVER['REMOTE_ADDR'])) {
-                    $realip = $_SERVER['REMOTE_ADDR'];
-                } else {
-                    $realip = '0.0.0.0';
-                }
-            }
-        } else {
-            if (getenv('HTTP_X_FORWARDED_FOR')) {
-                $realip = getenv('HTTP_X_FORWARDED_FOR');
-            } elseif (getenv('HTTP_CLIENT_IP')) {
-                $realip = getenv('HTTP_CLIENT_IP');
-            } else {
-                $realip = getenv('REMOTE_ADDR');
-            }
-        }
-        preg_match("/[\d\.]{7,15}/", $realip, $onlineip);
-        $realip = !empty($onlineip[0]) ? $onlineip[0] : '0.0.0.0';
-        return $realip;
+        $json = file_get_contents("http://ip.taobao.com/service/getIpInfo.php?ip=myip");
+        $data = json_decode($json)->data;
+        $arr['city'] = $data->city;
+        $arr['ip'] = $data->ip;
+        return $arr;
+    }
+
+
+    public function getUserById($id)
+    {
+        $model = new User();
+        return $model->getInfoById($id)['username'];
     }
 
     /*
-     * 获取登录城市
+     * 获取商品分类及数据
      * */
-    public function getCity($getIp)
+    public function getGoods()
     {
-        // 获取当前位置所在城市
-        $content = file_get_contents("https://api.map.baidu.com/location/ip?ip={$getIp}&ak=YIqKqk1gtxe1e7xNhaSTS71rOFwx1ARH&coor=bd09ll");
-        $json = json_decode($content);
-//        var_dump($json->status);
-        if($json->status==0){
-            $address = $json->{'content'}->{'address'};//按层级关系提取address数据
-            $data['address'] = $address;
-            return mb_substr($data['address'],0,3,'utf-8');
+        $goodsModel = new Goods();
+        $typeModel = new Type();
+        $data = Redis::get('result');
+        if(empty($data)){
+            $allGoods = $goodsModel->getAll();
+            $allTyoe = $typeModel->getAll();
+            $result = $this->classify($allTyoe,$allGoods);
+            Redis::set('result',serialize($result));
         }else{
-            return "未知";
+            $result = unserialize($data);
         }
+        return $result;
+    }
 
+    public function classify($type,$goods)
+    {
+        foreach ($type as $k => $v) {
+            $i=0;
+            foreach ($goods as $key => $val) {
+                if($v['t_id']==$val['tid']){
+                    ++$i;
+                    if ($i <= 6){
+                        $type[$k]['left'][] = $val;
+                    }elseif ($i > 6 && $i <= 12){
+                        $type[$k]['center'][] = $val;
+                    }elseif ($i > 12 && $i <= 18){
+                        $type[$k]['right'][] = $val;
+                    }
+                }
+            }
+        }
+        return $type;
     }
 
 }

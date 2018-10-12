@@ -9,7 +9,7 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
-use App\Services\IndexService;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Mail;
 
 class IndexController extends Controller
@@ -19,9 +19,8 @@ class IndexController extends Controller
      * */
     public function index()
     {
-        $service = new IndexService();
-        $service->getGoods();
-        return view('index.index');
+        $service = new UserService();
+        return view('index.index',['result' => $service->getGoods()]);
     }
 
     /*
@@ -53,8 +52,8 @@ class IndexController extends Controller
      * */
     public function test()
     {
-        Mail::send('user.login',['name'=>'iamlgz'],function ($message){
-            $message->to('1436887468@qq.com')->subject('测试');
-        });
+        $json = file_get_contents("http://ip.taobao.com/service/getIpInfo.php?ip=myip");
+        var_dump(json_decode($json)->data);
+
     }
 }

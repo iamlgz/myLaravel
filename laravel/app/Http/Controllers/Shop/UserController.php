@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Shop;
 
 use App\Jobs\SendReminderEmail;
 use App\Services\UserService;
-use Illuminate\Contracts\Queue\Job;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,6 +16,9 @@ class UserController extends Controller
      * */
     public function login()
     {
+        if(session('uid')){
+            return view('remind.remind',['msg'=>'您已登录','url'=>'index']);
+        }
         return view('user.login');
     }
 
@@ -35,9 +36,7 @@ class UserController extends Controller
     public function register(Request $request)
     {
         if($request->isMethod('post')){
-
-            $data=Input::get();
-            unset($data['_token']);
+            $data=$request->post();
             $rules=['captcha' => 'required|captcha'];
             $volidata=Validator::make($data,$rules);
             if($volidata->fails()){
@@ -48,26 +47,23 @@ class UserController extends Controller
             if($data['password'] !== $data['repassword']){
                 return view('remind.remind',['msg' => '两次输入的密码不一致']);
             }
-            unset($data['repassword']);
-            unset($data['captcha']);
-            $data['password'] = md5($data['password']);
-            $service=new UserService();
-            //判断是否是邮箱注册
-            if(isset($data['email'])){
-                $result=$service->registByEmail($data);
-                if(!empty($result)){
-                    $this->dispatchNow(new SendReminderEmail($result));
-                    return view('remind.remind',['url' => 'login','msg' => '注册成功']);
-                }else{
-                    return view('remind.remind',['msg' => '该邮箱已被注册']);
-                }
-            }else{
-                if($service->registByTel($data)){
-                    return view('remind.remind',['url' => 'tel_login','msg' => '注册成功']);
-                }else{
-                    return view('remind.remind',['msg' => '该手机号已被注册']);
-                }
+            $emailPreg = "/^\w+@\w+\.(com|cnc|net)$/";
+            $mobilePreg = "/^1[3-9]{2}\d{8}$/";
+            $arr = [];
+            if(preg_match($emailPreg,$data['username'])){
+                $arr['email'] = $data['username'];
+            }elseif (preg_match($mobilePreg,$data['username'])){
+                $arr['tel'] = $data['username'];
             }
+            $arr['password'] = $data['password'];
+            $service = new UserService();
+            $result=$service->register($arr);
+            if(!empty($result)){
+                return view('remind.remind',['url' => 'index','msg' => '注册成功']);
+            }else{
+                return view('remind.remind',['msg' => '该邮箱已被注册']);
+            }
+
         }
         return view('user.register');
     }
@@ -91,17 +87,20 @@ class UserController extends Controller
         $validata=Validator::make($data,$rules);
 //        判断验证码是否输入正确
         if($validata->fails()){
-            return view('remind.remind',['msg'=>'验证码输入错误']);
+            return view('remind.remind',['msg' => '验证码输入错误']);
         }else{
-            unset($data['_token']);
-            unset($data['captcha']);
-            $data['password'] = md5($data['password']);
+            $emailPreg = "/^\w+@\w+\.(com|cnc|net)$/";
+            $mobilePreg = "/^1[3-9]{2}\d{8}$/";
+            $arr=[];
+            if(preg_match($emailPreg,$data['username'])){
+                $arr['email'] = $data['username'];
+            }elseif (preg_match($mobilePreg,$data['username'])){
+                $arr['tel'] = $data['username'];
+            }
+            $arr['password'] = $data['password'];
             $service = new UserService();
-            $res=$service->login($data);
-            if(!empty($res)){
-                $user=$res->toArray();
-                session(['uid'=>$user['id']]);
-                session(['username'=>$user['username']]);
+            $res=$service->login($arr);
+            if($res){
                 return view('remind.remind',['msg'=>'登录成功','url'=>'index']);
             }else{
                 return view('remind.remind',['msg'=>'账号或密码输入错误']);
@@ -123,5 +122,14 @@ class UserController extends Controller
     public function loginByTel()
     {
         return view('user.tel_login');
+    }
+
+    /*
+     * 退出登录
+     * */
+    public function loginOut()
+    {
+        session(['username'=>false,'user'=>false]);
+        return view('remind.remind',['msg'=>'退出成功','url'=>'index']);
     }
 }

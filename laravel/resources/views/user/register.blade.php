@@ -17,15 +17,14 @@ use Illuminate\Support\Facades\URL;
 		<div class="regist">
 			<div class="regist_center">
 				<div class="regist_top">
-					<div class="left fl">邮箱注册</div>
+					<div class="left fl">账号注册</div>
 					<div class="right fr"><a href="index" target="_self">小米商城</a></div>
-					<div class="right fr" style="margin-right: 20px"><a href="telRegister" target="_self">手机号注册</a></div>
 					<input type="hidden" name="_token" value="{{csrf_token()}}">
 					<div class="clear"></div>
 					<div class="xian center"></div>
 				</div>
 				<div class="regist_main center">
-					<div class="username">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱:&nbsp;&nbsp;<input class="shurukuang" type="email" id="email" name="email" placeholder="请输入你的用户名"/><span>请不要输入汉字</span></div>
+					<div class="username">用&nbsp;&nbsp;户&nbsp;&nbsp;名:&nbsp;&nbsp;<input class="shurukuang" type="text" id="username" name="username" placeholder="输入手机号或者邮箱"/><span>请不要输入汉字</span></div>
 					<div class="username">密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码:&nbsp;&nbsp;<input class="shurukuang" type="password" id="password" name="password" placeholder="请输入你的密码"/><span>请输入6位以上字符</span></div>
 					<div class="username">确认密码:&nbsp;&nbsp;<input class="shurukuang" type="password" id="repassword" name="repassword" placeholder="请确认你的密码"/><span>两次密码要输入一致哦</span></div>
 					<div class="username">
@@ -48,11 +47,11 @@ use Illuminate\Support\Facades\URL;
             var repassword=$("#repassword").val()
             var password=$("#password").val()
             var captcha=$("#captcha").val()
-            var username=$("#email").val()
+            var username=$("#username").val()
 			var reg=/^\w+@\w+\.(cn|com|net)$/;
-
-            if(!reg.test(username)){
-                alert('邮箱格式不正确');
+			var telReg=/^1[3-9]{2}\d{8}$/;
+            if(!reg.test(username) && !telReg.test(username)){
+                alert('账号格式不正确');
                 return false;
             }
             if(password==''){

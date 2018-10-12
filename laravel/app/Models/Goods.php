@@ -11,6 +11,6 @@ class Goods extends Model
 
     public function getAll()
     {
-//        return $this->hasOne('App\Models\Type','t_id','tid');
+        return $this->get()->toArray();
     }
 }

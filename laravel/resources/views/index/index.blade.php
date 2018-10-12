@@ -24,55 +24,65 @@ use Illuminate\Support\Facades\URL;
 		<div class="banner_y center">
 			<div class="nav">				
 				<ul>
-
+					@foreach($result as $v)
 					<li>
-						<a href="{{URL::asset('')}}">手机&nbsp;&nbsp;&nbsp;电话卡</a>
-						{{--<a href="{{URL::asset('')}}"></a>--}}
+						<a href="{{URL::asset('')}}">{{$v['t_name']}}</a>
 						<div class="pop">
 							<div class="left fl">
-								<div>
-									<div class="xuangou_left fl">
-										<a href="{{URL::asset('')}}">
-											<div class="img fl"><img src="{{URL::asset('/image/xm6_80.png')}}" alt=""></div>
-											<span class="fl">小米6</span>
-											<div class="clear"></div>
-										</a>
+							@if(isset($v['left']))
+								@foreach($v['left'] as $va)
+									<div>
+										<div class="xuangou_left fl">
+											<a href="{{URL::asset('')}}">
+												<div class="img fl"><img src="{{URL::asset("$va[goods_img]")}}" alt=""></div>
+												<span class="fl">{{$va['goods_name']}}</span>
+												<div class="clear"></div>
+											</a>
+										</div>
+										<div class="xuangou_right fr"><a href="{{URL::asset('detail/'.$va['goods_id'])}}" target="_blank">选购</a></div>
+										<div class="clear"></div>
 									</div>
-									<div class="xuangou_right fr"><a href="{{URL::asset('index.php/xiangqing')}}" target="_blank">选购</a></div>
-									<div class="clear"></div>
+									@endforeach
+							@endif
 								</div>
-							</div>
 							<div class="ctn fl">
+								@if(isset($v['center']))
+									@foreach($v['center'] as $val)
 								<div>
 									<div class="xuangou_left fl">
 										<a href="{{URL::asset('')}}">
-											<div class="img fl"><img src="{{URL::asset('/image/xm5-80.jpg')}}" alt=""></div>
-											<span class="fl">小米手机5</span>
+											<div class="img fl"><img src="{{URL::asset("$val[goods_img]")}}" alt=""></div>
+											<span class="fl">{{$val['goods_name']}}</span>
 											<div class="clear"></div>
 										</a>
 									</div>
-									<div class="xuangou_right fr"><a href="{{URL::asset('')}}">选购</a></div>
+									<div class="xuangou_right fr"><a href="{{URL::asset('detail/'.$val['goods_id'])}}">选购</a></div>
 									<div class="clear"></div>
 								</div>
+									@endforeach
+								@endif
 							</div>
 							<div class="right fl">
+								@if(isset($v['right']))
+									@foreach($v['right'] as $value)
 								<div>
 									<div class="xuangou_left fl">
 										<a href="{{URL::asset('')}}">
-											<div class="img fl"><img src="{{URL::asset('/image/compare.jpg')}}" alt=""></div>
-											<span class="fl">对比手机</span>
+											<div class="img fl"><img src="{{URL::asset("$value[goods_img]")}}" alt=""></div>
+											<span class="fl">{{$val['goods_name']}}</span>
 											<div class="clear"></div>
 										</a>
 									</div>
-									<!-- <div class="xuangou_right fr"><a href="{{URL::asset('')}}">选购</a></div> -->
+									<div class="xuangou_right fr"><a href="{{URL::asset('detail/'.$value['goods_id'])}}">选购</a></div>
 									<div class="clear"></div>
 								</div>
-
+									@endforeach
+								@endif
 							</div>
 							<div class="clear"></div>
 						</div>
 					</li>
-
+					@endforeach
 				</ul>
 			</div>
 		
@@ -92,11 +102,8 @@ use Illuminate\Support\Facades\URL;
 			<div class="datu fl"><a href="{{URL::asset('')}}"><img src="{{URL::asset('/image/xiaomi5.jpg')}}" alt=""></a></div>
 			<div class="datu fr"><a href="{{URL::asset('')}}"><img src="{{URL::asset('/image/pinghengche.jpg')}}" alt=""></a></div>
 			<div class="clear"></div>
-
-
 		</div>
 	<!-- end banner -->
-	<div class="tlinks">Collect from <a href="{{URL::asset('')}}http://www.cssmoban.com/" >企业网站模板</a></div>
 
 	<!-- start danpin -->
 		<div class="danpin center">
@@ -140,8 +147,7 @@ use Illuminate\Support\Facades\URL;
 			<div class="biaoti center">配件</div>
 			<div class="main center">
 				<div class="content">
-					<div class="remen fl"><a href="{{URL::asset('')}}"><img src="{{URL::asset('/image/peijian1.jpg')}}"></a>
-					</div>
+					<div class="remen fl"><a href="{{URL::asset('')}}"><img src="{{URL::asset('/image/peijian1.jpg')}}"></a></div>
 					<div class="remen fl">
 						<div class="xinpin"><span>新品</span></div>
 						<div class="tu"><a href="{{URL::asset('')}}"><img src="{{URL::asset('/image/peijian2.jpg')}}"></a></div>

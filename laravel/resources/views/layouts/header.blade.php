@@ -43,6 +43,8 @@
                         @else
                             <li><a href="selfinfo" target="_blank" >{{session('username')}}</a></li>
                             <li>|</li>
+                            <li><a href="loginout" target="_blank" >退出</a></li>
+                            <li>|</li>
                         @endif
                         <li><a href="">消息通知</a></li>
                     </ul>
