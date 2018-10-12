@@ -10,11 +10,9 @@ namespace App\Services;
 
 use App\Jobs\SendReminderEmail;
 use App\Models\LoginLog;
-use App\Models\Type;
 use App\Models\User;
-use App\Models\Goods;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Support\Facades\Redis;
+
 
 class UserService
 {
@@ -121,43 +119,6 @@ class UserService
         return $model->getInfoById($id)['username'];
     }
 
-    /*
-     * 获取商品分类及数据
-     * */
-    public function getGoods()
-    {
-        $goodsModel = new Goods();
-        $typeModel = new Type();
-        $data = Redis::get('result');
-        if(empty($data)){
-            $allGoods = $goodsModel->getAll();
-            $allTyoe = $typeModel->getAll();
-            $result = $this->classify($allTyoe,$allGoods);
-            Redis::set('result',serialize($result));
-        }else{
-            $result = unserialize($data);
-        }
-        return $result;
-    }
 
-    public function classify($type,$goods)
-    {
-        foreach ($type as $k => $v) {
-            $i=0;
-            foreach ($goods as $key => $val) {
-                if($v['t_id']==$val['tid']){
-                    ++$i;
-                    if ($i <= 6){
-                        $type[$k]['left'][] = $val;
-                    }elseif ($i > 6 && $i <= 12){
-                        $type[$k]['center'][] = $val;
-                    }elseif ($i > 12 && $i <= 18){
-                        $type[$k]['right'][] = $val;
-                    }
-                }
-            }
-        }
-        return $type;
-    }
 
 }

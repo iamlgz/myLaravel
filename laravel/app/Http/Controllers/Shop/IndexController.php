@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
+use App\Services\IndexService;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Mail;
 
@@ -19,8 +20,8 @@ class IndexController extends Controller
      * */
     public function index()
     {
-        $service = new UserService();
-        return view('index.index',['result' => $service->getGoods()]);
+        $service = new IndexService();
+        return view('index.index',['result' => $service->getGoods(),'bottom' => $service->getNavBottom(),'start' => $service->getStartGoods(),'parts' => $service->getParts()]);
     }
 
     /*
