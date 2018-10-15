@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Shop;
 
-use App\Jobs\SendReminderEmail;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -54,7 +53,11 @@ class UserController extends Controller
                 $arr['email'] = $data['username'];
             }elseif (preg_match($mobilePreg,$data['username'])){
                 $arr['tel'] = $data['username'];
+            }else{
+                return view('remind.remind',['msg' => '请输入正确的用户名','url' => 'login']);
             }
+
+
             $arr['password'] = $data['password'];
             $service = new UserService();
             $result=$service->register($arr);
