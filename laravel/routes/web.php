@@ -44,3 +44,7 @@ Route::get('loginout','Shop\UserController@loginOut');
 //Auth::routes();
 
 //Route::get('/home', 'HomeController@index')->name('home');
+
+//后台路由
+
+Route::get('admin/index','Admin\AdminController@index');
