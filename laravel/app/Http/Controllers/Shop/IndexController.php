@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
+use App\Models\Menu;
 use App\Services\IndexService;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Mail;
@@ -53,8 +54,84 @@ class IndexController extends Controller
      * */
     public function test()
     {
-        $json = file_get_contents("http://ip.taobao.com/service/getIpInfo.php?ip=myip");
-        var_dump(json_decode($json)->data);
-
+//        $model = new Menu();
+//        var_dump($model->getMenu());
+        dump([
+            '商城后台管理',
+            [
+                'text' => 'Blog',
+                'url'  => 'admin/blog',
+                'can'  => 'manage-blog',
+            ],
+            [
+                'text'        => 'Pages',
+                'url'         => 'admin/pages',
+                'icon'        => 'file',
+                'label'       => 4,
+                'label_color' => 'success',
+            ],
+            'ACCOUNT SETTINGS',
+            [
+                'text' => 'Profile',
+                'url'  => 'admin/settings',
+                'icon' => 'user',
+            ],
+            [
+                'text' => 'Change Password',
+                'url'  => 'admin/settings',
+                'icon' => 'lock',
+            ],
+            [
+                'text'    => 'Multilevel',
+                'icon'    => 'share',
+                'submenu' => [
+                    [
+                        'text' => 'Level One',
+                        'url'  => '#',
+                    ],
+                    [
+                        'text'    => 'Level One',
+                        'url'     => '#',
+                        'submenu' => [
+                            [
+                                'text' => 'Level Two',
+                                'url'  => '#',
+                            ],
+                            [
+                                'text'    => 'Level Two',
+                                'url'     => '#',
+                                'submenu' => [
+                                    [
+                                        'text' => 'Level Three',
+                                        'url'  => '#',
+                                    ],
+                                    [
+                                        'text' => 'Level Three',
+                                        'url'  => '#',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'text' => 'Level One',
+                        'url'  => '#',
+                    ],
+                ],
+            ],
+            'LABELS',
+            [
+                'text'       => 'Important',
+                'icon_color' => 'red',
+            ],
+            [
+                'text'       => 'Warning',
+                'icon_color' => 'yellow',
+            ],
+            [
+                'text'       => 'Information',
+                'icon_color' => 'aqua',
+            ],
+        ]);
     }
 }

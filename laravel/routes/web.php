@@ -47,4 +47,9 @@ Route::get('loginout','Shop\UserController@loginOut');
 
 //后台路由
 
+//展示后台首页
 Route::get('admin/index','Admin\AdminController@index');
+//后台登录
+Route::get('admin/login','Admin\AdminController@login');
+//后台登录提交
+Route::post('admin/login','Admin\AdminController@login');
