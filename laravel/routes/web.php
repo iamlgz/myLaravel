@@ -46,9 +46,16 @@ Route::get('loginout','Shop\UserController@loginOut');
 //Route::get('/home', 'HomeController@index')->name('home');
 
 //后台路由
+Route::group(['middleware'=>['power'],'namespace'=>'Admin'],function(){
+    //展示后台首页
+    Route::get('admin/index','AdminController@index');
 
-//展示后台首页
-Route::get('admin/index','Admin\AdminController@index');
+    Route::get('admin/loginout','AdminController@loginOut');
+    //添加管理员页面
+    Route::get('admin/adminadd','AdminController@adminAdd');
+    //前台商品管理
+    Route::get('admin/homepage/leftmene','AdminController@operationGoods');
+});
 //后台登录
 Route::get('admin/login','Admin\AdminController@login');
 //后台登录提交

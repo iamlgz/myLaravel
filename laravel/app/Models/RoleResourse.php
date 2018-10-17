@@ -3,14 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class RoleResourse extends Model
 {
     //
     protected $table = 'role_resourse';
 
-    public function getSourse($ids)
-    {
-        return $this->select('select * from role_resourse where '.$ids);
-    }
+
 }

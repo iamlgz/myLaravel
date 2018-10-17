@@ -9,12 +9,14 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Dashboard</h1>
+
 @stop
 @section('content')
-    <p>Welcome to this beautiful admin panel.</p>
+    <section class="content">
+        <iframe src="" frameborder="0" name="menuFrame" style="width: 100%;min-height: 640px;overflow: visible;"></iframe>
+    </section>
 @stop
 
 @section('js')
-    <script> console.log('Hi!'); </script>
+
 @stop

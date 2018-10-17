@@ -8,10 +8,12 @@
 
 namespace App\Services;
 
-use App\Models\Menu;
 use App\Models\AdminUser;
-use App\Models\RoleResourse;
+use App\Models\Button;
+use App\Models\Goods;
+use App\Models\Menu;
 use App\Models\userRole;
+use Illuminate\Support\Facades\Redis;
 
 class AdminService
 {
@@ -35,35 +37,37 @@ class AdminService
             }
             session_set_cookie_params($time);
             session_start();
-            session('admin_user',$user);
+            session(['admin_user' => $user]);
+            return true;
         }
-        $this->menuControl($user['admin_id']);
     }
 
-    public function menuControl($uid)
+    public static function menuControl()
     {
-        $roleModel = new userRole();
-        $ids = '';
-        $roleId = $roleModel->getRoleId($uid);
-        foreach ($roleId as $v) {
-            $ids.='role_id='.$v['role_id'].' or ';
+        $uid = session('admin_user')['admin_id'];
+        $ressult = unserialize(Redis::get($uid));
+        if(!$ressult){
+            $roleModel = new userRole();
+            $array = [];
+            if(session('admin_user')['is_super']){
+                $model = new Menu();
+                $array = $model->getMenu();
+            }else{
+                $res = $roleModel->getMenu($uid);
+                foreach ($res as $key => $val) {
+                    $array[$key]['menu_id'] = $val->menu_id;
+                    $array[$key]['text'] = $val->text;
+                    $array[$key]['url'] = $val->url;
+                    $array[$key]['label'] = $val->label;
+                    $array[$key]['label_color'] = $val->label_color;
+                    $array[$key]['icon'] = $val->icon;
+                    $array[$key]['pid'] = $val->pid;
+                }
+            }
+            $ressult = self::getTree($array);
+            Redis::set($uid,serialize($ressult));
         }
-        $ids=rtrim($ids,'or ');
-        $sourseModel = new RoleResourse();
-        var_dump($sourseModel->getSourse($ids));
-        die;
-    }
-
-    /*
-     * 处理后台菜单
-     * */
-    public static function getMenu()
-    {
-        $model = new Menu();
-        $data = $model->getMenu();
-        $res = self::getTree($data);
-//        dump($res);die;
-        return $res;
+        return $ressult;
     }
 
     public static function getTree($array,$pid = 0)
@@ -78,6 +82,34 @@ class AdminService
             }
         }
         return $tree;
+    }
+
+    /*
+     * 获取分类及商品
+     * */
+    public function getGoods()
+    {
+        $model = new Goods();
+        return $model->getTypeAndGoods();
+    }
+
+    /*
+     * 获取按钮
+     * */
+    public function getButton($menu_id)
+    {
+        $uid = session('admin_user')['admin_id'];
+        $menuModel = new Button();
+        $arr = [];
+        if(session('admin_user')['is_super']){
+            $button = $menuModel->getAll($menu_id);
+        }else{
+            $button = $menuModel->getButton($menu_id,$uid);
+        }
+        foreach ($button as $item) {
+            $arr[$item->button_id] = 1;
+        }
+        return $arr;
     }
 
 }
