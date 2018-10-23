@@ -52,7 +52,7 @@ class AdminService
     {
         $uid = session('admin_user')['admin_id'];
         $ressult = unserialize(Redis::get($uid));
-        if($ressult){
+        if(!$ressult){
             $roleModel = new userRole();
             $array = [];
             if(session('admin_user')['is_super']){
@@ -284,6 +284,7 @@ class AdminService
         foreach ($data['checkname'] as $v) {
             $arr[] = ['role_id'=>$role_id,'resourse_id'=>$v,'type'=>1];
         }
-        dump($arr);die;
+        $model = new RoleResourse();
+        return $model->changePower($role_id,$arr,1);
     }
 }

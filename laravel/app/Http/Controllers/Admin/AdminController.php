@@ -190,7 +190,11 @@ class AdminController extends Controller
     {
         $service = new AdminService();
         if($request->isMethod('post')){
-            $service->addButtonPower($request->post());
+            if($service->addButtonPower($request->post())){
+                return view('remind.remind',['msg'=>'修改成功']);
+            }else{
+                return view('remind.remind',['msg'=>'修改失败']);
+            }
         }
         return view('admin.role_add_button_power',['role'=>$service->getRole(),'button'=>$service->getMenuAndButton()]);
     }
