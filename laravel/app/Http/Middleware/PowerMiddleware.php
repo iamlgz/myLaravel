@@ -18,6 +18,8 @@ class PowerMiddleware
         if(!session('admin_user')){
             return response()->view('remind.remind',['msg'=>'请登录','url'=>'login']);
         }
+//        $id = session('admin_user')['admin_id'];
+
         return $next($request);
     }
 }

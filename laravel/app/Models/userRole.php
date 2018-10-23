@@ -19,4 +19,25 @@ class userRole extends Model
     {
         return $this->hasMany('App\Models\RoleResourse','role_id');
     }
+
+    public function addAdmin($data)
+    {
+        return $this->insert($data);
+    }
+
+    /*
+     * 修改管理员角色
+     * */
+    public function updateRole($admin_id,$role)
+    {
+        return $this->where(['admin_id'=>$admin_id])->update($role);
+    }
+
+    /*
+     * 删除某个管理员
+     * */
+    public function delAdmin($admin_id)
+    {
+        return $this->where(['admin_id'=>$admin_id])->delete();
+    }
 }

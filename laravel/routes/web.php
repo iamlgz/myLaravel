@@ -55,7 +55,40 @@ Route::group(['middleware'=>['power'],'namespace'=>'Admin'],function(){
     Route::get('admin/adminadd','AdminController@adminAdd');
     //前台商品管理
     Route::get('admin/homepage/leftmene','AdminController@operationGoods');
+
+    Route::get('admin/curdadmin','AdminController@operationAdmin');
+    //管理员添加
+    Route::post('admin/adminadd','AdminController@adminAdd');
+    //修改管理员
+    Route::get('admin/admin/update','AdminController@adminUpdate');
+    //提交修改管理员表达
+    Route::post('admin/admin/update','AdminController@adminUpdate');
+    //删除
+    Route::get('admin/admin/del','AdminController@adminDel');
+    //角色列表
+    Route::get('admin/curdrole','AdminController@roleList');
+    //角色修改页面
+    Route::get('admin/role/update','AdminController@roleUpdate');
+    //角色修改表单提交
+    Route::post('admin/role/update','AdminController@roleUpdate');
+    //角色添加
+    Route::get('admin/roleadd','AdminController@roleAdd');
+    //角色添加表单提交
+    Route::post('admin/role/roleadd','AdminController@roleAdd');
+    //角色删除
+    Route::get('admin/role/del','AdminController@roleDel');
+    //角色添加权限
+    Route::get('admin/roleaddpower','AdminController@roleAddPower');
+    //查找角色权限
+    Route::get('admin/role/select','AdminController@roleSelectPower');
+    //添加权限
+    Route::post('admin/role/poweradd','AdminController@roleAddPower');
+    //角色添加按钮权限
+    Route::get('admin/role/roleaddbuttonpower','AdminController@roleAddButtonPower');
+    //角色添加按钮权限表单提交
+    Route::post('admin/button/poweradd','AdminController@roleAddButtonPower');
 });
+
 //后台登录
 Route::get('admin/login','Admin\AdminController@login');
 //后台登录提交

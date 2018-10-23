@@ -16,6 +16,6 @@ class Button extends Model
 
     public function getAll($menu_id)
     {
-        return $this->where(['menu_id'=>$menu_id])->get(['button_id']);
+        return $this->where(['menu_id'=>$menu_id])->get(['button_id','button_name','id']);
     }
 }
