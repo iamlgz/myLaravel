@@ -13,4 +13,10 @@ class Goods extends Model
     {
         return $this->get()->toArray();
     }
+
+    public function getTypeAndGoods()
+    {
+        return $this->join('type','goods.tid','=','type.t_id')->paginate(10);
+    }
+
 }

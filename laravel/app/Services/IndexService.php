@@ -9,9 +9,12 @@
 namespace App\Services;
 
 use App\Models\Goods;
+use App\Models\Menu;
 use App\Models\Type;
 use App\Models\Promotion;
 use Illuminate\Support\Facades\Redis;
+
+
 
 class IndexService
 {
