@@ -9,8 +9,12 @@
 namespace App\Services;
 
 use App\Models\AdminUser;
+use App\Models\Attributes;
+use App\Models\AttrVal;
 use App\Models\Button;
+use App\Models\Category;
 use App\Models\Goods;
+use App\Models\GoodsAttributes;
 use App\Models\Menu;
 use App\Models\Role;
 use App\Models\RoleResourse;
@@ -52,7 +56,7 @@ class AdminService
     {
         $uid = session('admin_user')['admin_id'];
         $ressult = unserialize(Redis::get($uid));
-        if(!$ressult){
+        if($ressult){
             $roleModel = new userRole();
             $array = [];
             if(session('admin_user')['is_super']){
@@ -286,5 +290,206 @@ class AdminService
         }
         $model = new RoleResourse();
         return $model->changePower($role_id,$arr,1);
+    }
+
+    /*
+     *属性列表
+     * */
+    public function attrList()
+    {
+        $model = new Attributes();
+        return $model->getAll();
+    }
+
+    /*
+     * 属性添加
+     * */
+    public function attrAdd($data)
+    {
+        $model = new Attributes();
+        return $model->attrAdd($data);
+    }
+
+    /*
+     * 查找某一条属性
+     * */
+    public function attrFind($id)
+    {
+        $model = new Attributes();
+        return $model->attrFind($id);
+    }
+
+    /*
+     * 属性修改
+     * */
+    public function attrUpdate($data)
+    {
+        $id = $data['id'];
+        $arr = ['name' => $data['attr_name']];
+        $model = new Attributes();
+        return $model->attrUpdate($id,$arr);
+    }
+
+    /*
+     * 属性值查询
+     * */
+    public function getAttrVal()
+    {
+        $model = new AttrVal();
+        return $model->getAll();
+    }
+
+    /*
+     * 查询出所有的属性
+     * */
+    public function getAllAtrributes()
+    {
+        $model = new Attributes();
+        return $model->getAllAtrributes();
+    }
+
+    /*
+     * 属性值添加
+     * */
+    public function attrValAdd($data)
+    {
+        $arr = ['attr_id'=>$data['attr_id'],'val_name'=>$data['name']];
+        $model = new AttrVal();
+        return $model->attrValAdd($arr);
+    }
+
+    /*
+     * 分类查询
+     * */
+    public function getCategory()
+    {
+        $model = new Category();
+        return $model->getCategory();
+    }
+
+    /*
+     * 分类添加
+     * */
+    public function categoryAdd($data,$file)
+    {
+        $arr = [];
+        $arr['c_name'] = $data['category_name'];
+        $arr['url'] = $data['url'];
+        $arr['pid'] = $data['pid'];
+        $arr['attr_ids'] = implode(',',$data['attrid']);
+        $arr['img'] = substr($file->store('public/img'),strpos($file->store('public/img'),'/')) ?? '';
+        $model = new Category();
+        return $model->addCategory($arr);
+    }
+
+    /*
+     * 分类lieb
+     * */
+    public function categoryList()
+    {
+        $model = new Category();
+        return $model->categoryList();
+    }
+
+    /*
+     * 分类查询某一条
+     * */
+    public function getCateOne($id)
+    {
+        $model = new Category();
+        return $model->getOne($id);
+    }
+
+    /*
+     * 分类修改
+     * */
+    public function cateUpdate($data,$file)
+    {
+        $arr = [];
+        $id = $data['id'];
+        $model = new Category();
+        if(empty($file)){
+            $res = explode('/',$data['pid']);
+            $pid = $res[0];
+            if($pid!=0){
+                $arr['path'] = $res[1];
+            }
+            $arr['pid'] = $pid;
+            $arr['c_name'] = $data['category_name'];
+            $arr['url'] = $data['url'];
+        }
+        return $model->cateUpdate($id,$arr);
+    }
+
+    public function getCate()
+    {
+        $model = new Category();
+        return $model->getCate();
+    }
+
+    public function getAttr()
+    {
+        $model = new Attributes();
+        return $model->getAllAtrributes();
+    }
+
+    public function getCateVal($ids)
+    {
+        $model = new AttrVal();
+        $AttrModel = new Attributes();
+        $result = $AttrModel->getIn($ids)->toarray();
+        $data = $model->getAttrVal($ids)->toarray();
+        $str = '';
+        foreach ($result as $k => $v) {
+            $str .= '<tr><td  style="width: 200px;text-align: center;" class="lgz" id="'.$v['id'].'">'.$v['name'].'</td><td class="iamlgz">';
+            foreach ($data as $key => $val) {
+                if($v['id']==$val['attr_id']){
+                    $str.='<input type="checkbox" value="'.$val['id'].'" name="'.$v['id'].'[]" id="sku">'.$val['val_name'].'&nbsp;&nbsp;';
+                }
+            }
+            $str.='</td></tr>';
+        }
+        return $str;
+    }
+
+    public function getAttrIn($ids)
+    {
+        $model = new Attributes();
+        return $model->getIn($ids);
+    }
+
+    public function goodsAdd($data,$file)
+    {
+        $str = '';
+        foreach ($file as $v) {
+            $str .= substr($v->store('public/img'),strpos($v->store('public/img'),'/')).',';
+        }
+
+        $arr['goods_img'] = rtrim($str,',');
+        $arr['goods_name'] = $data['goods_name'];
+        $arr['goods_price'] = $data['goods_price'];
+        $arr['promotion_price'] = $data['promotion_price'];
+        $arr['is_sale'] = $data['is_sale'];
+        $arr['cid'] = $data['t_id'];
+        $arr['description'] = $data['content'];
+        $arr['create_at'] = time();
+        $model = new Goods();
+        $array = [];
+        $goods_id = $model->addGoods($arr);
+        foreach ($data['attributes'] as $k => $v) {
+            $array['attr_val_id'] = implode(',',$data["$v"]).',';
+        }
+        $array['attr_id'] = implode(',',$data['attributes']);
+        $array['attr_val_id'] = rtrim($array['attr_val_id'],',');
+        $array['goods_id'] = $goods_id;
+        $attrvalModel = new GoodsAttributes();
+
+        return $attrvalModel->addGoodsAttr($array);
+    }
+
+    public function getAttrValIn($ids)
+    {
+        $model = new AttrVal();
+        return $model->getAttrValIn($ids)->toarray();
     }
 }

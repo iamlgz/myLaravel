@@ -12,9 +12,7 @@
 
 @stop
 @section('content')
-    <section class="content">
-        <iframe src="" frameborder="0" name="menuFrame" style="width: 100%;min-height: 640px;overflow: visible;"></iframe>
-    </section>
+        <iframe src="" frameborder="0" name="menuFrame" style="width: 1275px;min-height: 640px;overflow: visible;"></iframe>
 @stop
 
 @section('js')
