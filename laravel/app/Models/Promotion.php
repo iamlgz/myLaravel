@@ -30,6 +30,6 @@ class Promotion extends Model
      * */
     public function getParts()
     {
-        return $this->leftJoin('goods','promotion.goods_id','=','goods.goods_id')->where(['position' => 'parts'])->get(['promotion.goods_id','promotion.type','promotion.describe','promotion.img','goods.goods_price','goods.goods_name','goods.goods_ms','promotion.url'])->toArray();
+        return $this->leftJoin('goods','promotion.goods_id','=','goods.goods_id')->where(['position' => 'parts'])->get(['promotion.goods_id','promotion.type','promotion.describe','promotion.img','goods.goods_price','goods.goods_name','goods.description','promotion.url'])->toArray();
     }
 }

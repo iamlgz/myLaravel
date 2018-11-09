@@ -12,6 +12,7 @@ use App\Models\AdminUser;
 use App\Models\Attributes;
 use App\Models\AttrVal;
 use App\Models\Button;
+use App\Models\Cargo;
 use App\Models\Category;
 use App\Models\Goods;
 use App\Models\GoodsAttributes;
@@ -433,6 +434,12 @@ class AdminService
         return $model->getAllAtrributes();
     }
 
+    public function cateFind($id)
+    {
+        $model = new Category();
+        return $model->cateFind($id);
+    }
+
     public function getCateVal($ids)
     {
         $model = new AttrVal();
@@ -441,10 +448,11 @@ class AdminService
         $data = $model->getAttrVal($ids)->toarray();
         $str = '';
         foreach ($result as $k => $v) {
+
             $str .= '<tr><td  style="width: 200px;text-align: center;" class="lgz" id="'.$v['id'].'">'.$v['name'].'</td><td class="iamlgz">';
             foreach ($data as $key => $val) {
                 if($v['id']==$val['attr_id']){
-                    $str.='<input type="checkbox" value="'.$val['id'].'" name="'.$v['id'].'[]" id="sku">'.$val['val_name'].'&nbsp;&nbsp;';
+                    $str.='<input type="checkbox" value="'.$val['id'].'" name="'.$v['id'].'[]">'.$val['val_name'].'&nbsp;&nbsp;';
                 }
             }
             $str.='</td></tr>';
@@ -460,9 +468,19 @@ class AdminService
 
     public function goodsAdd($data,$file)
     {
+
         $str = '';
         foreach ($file as $v) {
             $str .= substr($v->store('public/img'),strpos($v->store('public/img'),'/')).',';
+        }
+
+        $sku_arr = [];
+        foreach ($data['attributes'] as $v) {
+            $sku_arr[] = $data["$v"];
+        }
+
+        if (count($sku_arr)==0){
+            return view('remind.remind',['msg'=>'请选择属性']);
         }
 
         $arr['goods_img'] = rtrim($str,',');
@@ -479,10 +497,20 @@ class AdminService
         foreach ($data['attributes'] as $k => $v) {
             $array['attr_val_id'] = implode(',',$data["$v"]).',';
         }
+        foreach ($data as $key =>$value) {
+            if(strpos($key,'@')){
+                $k = substr($key,strpos($key,'@')+1);
+                $ck[] = ['price'=>$value,'name'=>$this->cateFind($data['t_id'])->c_name."/$k",'invoutory'=>$data['kc%'.$k],'sku_no'=>$this->getDkej(),'sku_str'=>$k,'goods_id'=>$goods_id,'create_time'=>time()];
+            }
+        }
+        $cat = new Cargo();
+        $cat->addCargo($ck);
+
         $array['attr_id'] = implode(',',$data['attributes']);
         $array['attr_val_id'] = rtrim($array['attr_val_id'],',');
         $array['goods_id'] = $goods_id;
         $attrvalModel = new GoodsAttributes();
+
 
         return $attrvalModel->addGoodsAttr($array);
     }
@@ -491,5 +519,15 @@ class AdminService
     {
         $model = new AttrVal();
         return $model->getAttrValIn($ids)->toarray();
+    }
+
+    /*
+     * 笛卡尔积
+     * */
+    public function getDkej()
+    {
+        $snKeys=array();
+        $prefix='code';//字符串前缀
+       return $prefix . md5(uniqid(mt_rand(), true));
     }
 }

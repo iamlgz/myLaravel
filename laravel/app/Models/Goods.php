@@ -24,4 +24,9 @@ class Goods extends Model
         return self::insertGetId($data);
     }
 
+    public function getOne($id)
+    {
+        return self::find($id);
+    }
+
 }

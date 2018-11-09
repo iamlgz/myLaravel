@@ -207,7 +207,6 @@ class AdminController extends Controller
         if($request->isMethod('post')){
             $file = $request->file('goods_img');
             $data = $request->post();
-//            dump($data);die;
             if(empty($file)){
                 return view('remind.remind',['msg'=>'请上传图片']);
             }
@@ -368,8 +367,14 @@ class AdminController extends Controller
         $service = new AdminService();
         $arr = [];
         foreach ($data as $key => $val) {
-            $arr[] = $service->getAttrValIn($val);
+            $ids = [];
+            $val = rtrim($val,')');
+            $val = ltrim($val,'(');
+            $res = explode(',',$val);
+//            print_r($res);
+            $arr[] = $service->getAttrValIn($res);
         }
+
 
         $str = '';
 
@@ -378,13 +383,12 @@ class AdminController extends Controller
             $id = '';
             $str .= '<tr>';
             foreach ($v as $value) {
-
                 $name .= $value['val_name'].'/';
                 $id .= $value['id'].',';
             }
             $name = rtrim($name,'/');
             $id = rtrim($id,',');
-            $str .= '<td>'.$name.'</td><td><input type="text" name="sku_price" id="'.$id.'" class="sku_price" placeholder="请输入货品价格"></td>';
+            $str .= '<td>'.$name.'</td><td><input type="text" name="sku_price@'.$name.'" class="sku_price" placeholder="请输入货品价格"></td><td><input name="kc%'.$name.'" type="number" placeholder="请输入库存量"></td>';
             $str .= '</tr>';
         }
         return $str;

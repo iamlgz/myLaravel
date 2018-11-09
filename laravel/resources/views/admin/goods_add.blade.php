@@ -186,24 +186,21 @@
 
     $("#create_sku").click(function () {
         var iamlgz = [];
-        var even_attr_val_id = [];
-        var odd_attr_val_id = [];
+        var all =[];
         var attr = [];
-        $(".lgz").each(function () {
+        $(".lgz").each(function (i) {
+            var arr = [];
             attr.push(this.id);
+
+            $("#table>tr>td>input:checked").each(function () {
+                if(attr[i]+'[]' == this.name){
+                    arr.push(this.value);
+                }
+            })
+
+            all.push(arr);
+
         });
-
-        $("#table>tr:even>td>input:checked").each(function () {
-            even_attr_val_id.push(this.value)
-        })
-
-        $("#table>tr:odd>td>input:checked").each(function () {
-            odd_attr_val_id.push(this.value)
-        })
-
-        // console.log(even_attr_val_id);
-        // console.log(even_attr_val_id);
-        // console.log(odd_attr_val_id);
 
 
         var Cartesian = function(a, b) {
@@ -235,17 +232,14 @@
             }
         }
 
-        var r = multiCartesian([even_attr_val_id,odd_attr_val_id]);
-
-    // console.log(multiCartesian([even_attr_val_id,odd_attr_val_id]));
+        var r = multiCartesian(all);
 
         for (var i = 0; i < r.length; i++) {
-            iamlgz.push([r[i][0][0],r[i][1]])
+            iamlgz.push("("+r[i]+")")
         }
 
         $.get("{{url('admin/get/sku')}}",{arr:iamlgz},function (msg) {
             $("#sku_table").html(msg)
-            // console.log(msg);
         })
 
 

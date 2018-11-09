@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Type extends Model
 {
-    protected $table='type';
-    protected $primaryKey='t_id';
+    protected $table='category';
+    protected $primaryKey='c_id';
 
     public function getAll()
     {

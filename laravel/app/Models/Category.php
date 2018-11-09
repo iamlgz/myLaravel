@@ -9,6 +9,7 @@ class Category extends Model
 {
     //
     protected $table = 'category';
+    protected $primaryKey = 'c_id';
 
     public $timestamps = false;
 
@@ -48,5 +49,10 @@ class Category extends Model
 //    {
 //        return self::whereIn('id',$ids)->get()->toarray();
 //    }
+
+    public function cateFind($id)
+    {
+        return self::find($id);
+    }
 
 }
