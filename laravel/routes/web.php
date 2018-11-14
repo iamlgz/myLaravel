@@ -11,6 +11,7 @@
 |
 */
 
+
 Route::get('/','Shop\IndexController@index');
 
 //商城首页
@@ -87,6 +88,41 @@ Route::group(['middleware'=>['power'],'namespace'=>'Admin'],function(){
     Route::get('admin/role/roleaddbuttonpower','AdminController@roleAddButtonPower');
     //角色添加按钮权限表单提交
     Route::post('admin/button/poweradd','AdminController@roleAddButtonPower');
+    //商品的添加
+    Route::get('admin/goods/goodsadd','AdminController@goodsAdd');
+    Route::post('admin/goods/goodsadd','AdminController@goodsAdd');
+    //商品属性列表
+    Route::get('admin/attr','AdminController@attrList');
+    //属性添加
+    Route::get('admin/attr/add','AdminController@attrAdd');
+    //属性添加表单提交
+    Route::post('admin/attr/add','AdminController@attrAdd');
+    //属性修改
+    Route::get('admin/attr/update','AdminController@attrUpdate');
+    //属性修改表单提交
+    Route::post('admin/attr/update','AdminController@attrUpdate');
+    //属性值列表
+    Route::get('admin/attrval','AdminController@attrValList');
+    //属性值添加
+    Route::get('admin/attrval/add','AdminController@attrValAdd');
+    //属性值添加表单提交
+    Route::post('admin/attrval/add','AdminController@attrValAdd');
+    //分类添加yem
+    Route::get('admin/category/add','AdminController@categoryAdd');
+    //分类添加表单提交
+    Route::post('admin/category/add','AdminController@categoryAdd');
+
+    Route::get('admin/category','AdminController@categoryList');
+    //分类修改页面
+    Route::get('admin/category/update','AdminController@categoryUpdate');
+    //分类修改页面
+    Route::post('admin/category/update','AdminController@categoryUpdate');
+    //ajax获取属性值
+    Route::post('admin/attrval/getone','AdminController@getCateVal');
+
+    Route::get('admin/attr/get','AdminController@getOneCate');
+
+    Route::get('admin/get/sku','AdminController@getSku');
 });
 
 //后台登录

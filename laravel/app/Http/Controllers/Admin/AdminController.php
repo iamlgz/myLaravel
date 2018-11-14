@@ -10,7 +10,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\AdminService;
-use App\Services\IndexService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 
@@ -197,6 +196,202 @@ class AdminController extends Controller
             }
         }
         return view('admin.role_add_button_power',['role'=>$service->getRole(),'button'=>$service->getMenuAndButton()]);
+    }
+
+    /*
+     * 商品添加
+     * */
+    public function goodsAdd(Request $request)
+    {
+        $service = new AdminService();
+        if($request->isMethod('post')){
+            $file = $request->file('goods_img');
+            $data = $request->post();
+            if(empty($file)){
+                return view('remind.remind',['msg'=>'请上传图片']);
+            }
+            if($service->goodsAdd($data,$file)){
+                return view('remind.remind',['msg'=>'添加成功']);
+            }else{
+                return view('remind.remind',['msg'=>'添加失败']);
+            }
+        }
+
+        return view('admin.goods_add',['cate'=>$service->getCate(),'attr'=>$service->getAttr()]);
+    }
+
+    /*
+     * 商品属性列表
+     * */
+    public function attrList(Request $request)
+    {
+        $menu_id = $request->get('menu_id');
+        $service = new AdminService();
+
+        return view('admin.attr_list',['data' => $service->attrList(),'menu_id'=>$menu_id,'button'=>$service->getButton($menu_id)]);
+    }
+
+    /*
+     * 商品属性添加
+     * */
+    public function attrAdd(Request $request)
+    {
+        if($request->isMethod('post')){
+            $serive = new AdminService();
+            if($serive->attrAdd(['name'=>$request->post('attr_name')])){
+                return view('remind.remind',['msg'=>'添加成功!']);
+            }else{
+                return view('remind.remind',['msg'=>'添加失败!']);
+            }
+        }
+        return view('admin.attr_add');
+    }
+
+    /*
+     * 商品属性修改
+     * */
+    public function attrUpdate(Request $request)
+    {
+        $service = new AdminService();
+
+        if($request->isMethod('post')){
+            if($service->attrUpdate($request->post())){
+                return view('remind.remind',['msg'=>'修改成功!']);
+            }else{
+                return view('remind.remind',['msg'=>'修改失败!']);
+            }
+        }
+        return view('admin.attr_update',['data'=>$service->attrFind($request->get('id'))->toarray()]);
+    }
+
+    /*
+     * 商品属性值列表
+     * */
+    public function attrValList(Request $request)
+    {
+        $menu_id = $request->get('menu_id');
+        $service = new AdminService();
+        return view('admin.attrval_list',['data'=>$service->getAttrVal(),'menu_id'=>$menu_id,'button'=>$service->getButton($menu_id)]);
+    }
+
+    /*
+     * 商品属性值添加
+     * */
+    public function attrValAdd(Request $request)
+    {
+        $service = new AdminService();
+        if($request->isMethod('post')){
+            if($service->attrValAdd($request->post())){
+                return view('remind.remind',['msg'=>'添加成功!']);
+            }else{
+                return view('remind.remind',['msg'=>'添加失败!']);
+            }
+        }
+        return view('admin.attrval_add',['attributes'=>$service->getAllAtrributes()]);
+    }
+
+    /*
+     * 商品分类添加
+     * */
+    public function categoryAdd(Request $request)
+    {
+        $service = new AdminService();
+
+        if($request->isMethod('post')){
+            $data = $request->input();
+//            dump($data);die;
+            $file = $request->file('imgfile');
+            if($service->categoryAdd($data,$file)){
+                return view('remind.remind',['msg'=>'添加成功!']);
+            }else{
+                return view('remind.remind',['msg'=>'添加失败!']);
+            }
+        }
+
+//        dump($service->getAttr());die;
+
+        return view('admin.category_add',['data'=>$service->getCategory(),'attr'=>$service->getAttr()]);
+    }
+
+    public function categoryList()
+    {
+        $menu_id = Input::get('menu_id');
+        $service = new AdminService();
+        return view('admin.category_list',['data'=>$service->categoryList(),'button'=>$service->getButton($menu_id)]);
+    }
+
+    /*
+     * 分类修改
+     * */
+    public function categoryUpdate(Request $request)
+    {
+        $id = $request->get('id');
+        $service = new AdminService();
+        if($request->isMethod('post')){
+            $file = $request->file('imgfile');
+            $data = $request->post();
+            if($service->cateUpdate($data,$file)){
+                return view('remind.remind',['msg'=>'修改成功!']);
+            }else{
+                return view('remind.remind',['msg'=>'修改失败!']);
+            }
+        }
+        return view('admin.category_update',['data'=>$service->getCateOne($id),'cate'=>$service->getCategory(),'id'=>$id]);
+    }
+
+    public function getCateVal(Request $request)
+    {
+        $attr_id_arr = $request->post('data',null);
+        if(!empty($attr_id_arr)){
+            $service = new AdminService();
+            return $service->getCateVal($attr_id_arr);
+        }else{
+            return null;
+        }
+    }
+
+    public function getOneCate(Request $request)
+    {
+        $id = $request->get('id');
+        if($id == '请选择'){
+            return null;
+        }
+        $service = new AdminService();
+        $ids = $service->getCateOne($id)->toarray()['attr_ids'];
+        return $service->getAttrIn(explode(',',$ids));
+    }
+
+    public function getSku(Request $request)
+    {
+        $data = $request->post('arr');
+        $service = new AdminService();
+        $arr = [];
+        foreach ($data as $key => $val) {
+            $ids = [];
+            $val = rtrim($val,')');
+            $val = ltrim($val,'(');
+            $res = explode(',',$val);
+//            print_r($res);
+            $arr[] = $service->getAttrValIn($res);
+        }
+
+
+        $str = '';
+
+        foreach ($arr as $k => $v) {
+            $name = '';
+            $id = '';
+            $str .= '<tr>';
+            foreach ($v as $value) {
+                $name .= $value['val_name'].'/';
+                $id .= $value['id'].',';
+            }
+            $name = rtrim($name,'/');
+            $id = rtrim($id,',');
+            $str .= '<td>'.$name.'</td><td><input type="text" name="sku_price@'.$name.'" class="sku_price" placeholder="请输入货品价格"></td><td><input name="kc%'.$name.'" type="number" placeholder="请输入库存量"></td>';
+            $str .= '</tr>';
+        }
+        return $str;
     }
 
 }

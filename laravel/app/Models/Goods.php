@@ -16,7 +16,17 @@ class Goods extends Model
 
     public function getTypeAndGoods()
     {
-        return $this->join('type','goods.tid','=','type.t_id')->paginate(10);
+        return $this->join('category','goods.cid','=','category.c_id')->paginate(10);
+    }
+
+    public function addGoods($data)
+    {
+        return self::insertGetId($data);
+    }
+
+    public function getOne($id)
+    {
+        return self::find($id);
     }
 
 }

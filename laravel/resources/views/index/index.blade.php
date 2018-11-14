@@ -26,20 +26,20 @@ use Illuminate\Support\Facades\URL;
 				<ul>
 					@foreach($result as $v)
 					<li>
-						<a href="{{URL::asset('')}}">{{$v['t_name']}}</a>
+						<a href="{{URL::asset('')}}">{{$v['c_name']}}</a>
 						<div class="pop">
 							<div class="left fl">
 							@if(isset($v['left']))
 								@foreach($v['left'] as $va)
 									<div>
 										<div class="xuangou_left fl">
-											<a href="{{URL::asset('')}}">
-												<div class="img fl"><img src="{{URL::asset("$va[goods_img]")}}" alt=""></div>
+											<a href="{{URL::asset('detail?id='.$va['goods_id'])}}">
+												<div class="img fl"><img src="{{URL::asset("storage/$va[goods_img]")}}" width="33px" height="39px"></div>
 												<span class="fl">{{$va['goods_name']}}</span>
 												<div class="clear"></div>
 											</a>
 										</div>
-										<div class="xuangou_right fr"><a href="{{URL::asset('detail/'.$va['goods_id'])}}" target="_blank">选购</a></div>
+										<div class="xuangou_right fr"><a href="{{URL::asset('detail?id='.$va['goods_id'])}}" target="_blank">选购</a></div>
 										<div class="clear"></div>
 									</div>
 									@endforeach
@@ -50,13 +50,13 @@ use Illuminate\Support\Facades\URL;
 									@foreach($v['center'] as $val)
 								<div>
 									<div class="xuangou_left fl">
-										<a href="{{URL::asset('')}}">
-											<div class="img fl"><img src="{{URL::asset("$val[goods_img]")}}" alt=""></div>
+										<a href="{{URL::asset('detail?id='.$val['goods_id'])}}">
+											<div class="img fl"><img src="{{URL::asset("storage/$val[goods_img]")}}" alt=""></div>
 											<span class="fl">{{$val['goods_name']}}</span>
 											<div class="clear"></div>
 										</a>
 									</div>
-									<div class="xuangou_right fr"><a href="{{URL::asset('detail/'.$val['goods_id'])}}">选购</a></div>
+									<div class="xuangou_right fr"><a href="{{URL::asset('detail?id='.$val['goods_id'])}}">选购</a></div>
 									<div class="clear"></div>
 								</div>
 									@endforeach
@@ -67,13 +67,13 @@ use Illuminate\Support\Facades\URL;
 									@foreach($v['right'] as $value)
 								<div>
 									<div class="xuangou_left fl">
-										<a href="{{URL::asset('')}}">
-											<div class="img fl"><img src="{{URL::asset("$value[goods_img]")}}" alt=""></div>
+										<a href="{{URL::asset('detail?id='.$value['goods_id'])}}">
+											<div class="img fl"><img src="{{URL::asset("storage/$value[goods_img]")}}" alt=""></div>
 											<span class="fl">{{$val['goods_name']}}</span>
 											<div class="clear"></div>
 										</a>
 									</div>
-									<div class="xuangou_right fr"><a href="{{URL::asset('detail/'.$value['goods_id'])}}">选购</a></div>
+									<div class="xuangou_right fr"><a href="{{URL::asset('detail?id='.$value['goods_id'])}}">选购</a></div>
 									<div class="clear"></div>
 								</div>
 									@endforeach
@@ -129,7 +129,7 @@ use Illuminate\Support\Facades\URL;
 							<div class="remen fl">
 								<div class="xinpin"><span style="background:#fff"></span></div>
 								<div class="tu"><a href="{{URL::asset('')}}"><img src="{{URL::asset($value['img'])}}"></a></div>
-								<div class="miaoshu"><a href="{{URL::asset('')}}">{{$value['goods_ms']}}</a></div>
+								<div class="miaoshu"><a href="{{URL::asset('')}}">{{$value['description']}}</a></div>
 								<div class="jiage">{{$value['goods_price']}}元</div>
 								<div class="pingjia">372人评价</div>
 								@if(!empty($value['describe']))
@@ -153,7 +153,7 @@ use Illuminate\Support\Facades\URL;
 							<div class="remen fl">
 								<div class="xinpin"><span style="background:#fff"></span></div>
 								<div class="tu"><a href="{{URL::asset('')}}"><img src="{{URL::asset($value['img'])}}"></a></div>
-								<div class="miaoshu"><a href="{{URL::asset('')}}">{{$value['goods_ms']}}</a></div>
+								<div class="miaoshu"><a href="{{URL::asset('')}}">{{$value['description']}}</a></div>
 								<div class="jiage">{{$value['goods_price']}}元</div>
 								<div class="pingjia">372人评价</div>
 								@if(!empty($value['describe']))

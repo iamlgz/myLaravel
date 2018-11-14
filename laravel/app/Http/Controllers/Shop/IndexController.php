@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Services\IndexService;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Mail;
 
 class IndexController extends Controller
@@ -38,7 +39,11 @@ class IndexController extends Controller
      * */
     public function goodsDetail()
     {
-        return view('index.goods_detail');
+        $id = Input::get('id');
+        $service = new IndexService();
+        dump($service->getGoodsDetail($id)->toarray());
+        dump($service->getSku($id));
+        return view('index.goods_detail',['goods'=>$service->getGoodsDetail($id)->toarray(),'data'=>$service->getSku($id)]);
     }
 
     /*

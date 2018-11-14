@@ -49,16 +49,7 @@
                                         </tr>
                                     @endforeach
                                  </tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <th rowspan="1" colspan="1">商品名称</th>
-                                        <th rowspan="1" colspan="1">商品单价</th>
-                                        <th rowspan="1" colspan="1">商品描述</th>
-                                        <th rowspan="1" colspan="1">商品类型</th>
-                                        @if(isset($button['goods_del']) || isset($button['goods_update']))<th rowspan="1" colspan="1">操作</th>@endif
 
-                                    </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                         </div>

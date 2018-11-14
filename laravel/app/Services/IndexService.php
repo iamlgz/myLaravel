@@ -8,6 +8,7 @@
 
 namespace App\Services;
 
+use App\Models\Cargo;
 use App\Models\Goods;
 use App\Models\Menu;
 use App\Models\Type;
@@ -25,12 +26,12 @@ class IndexService
     {
         $goodsModel = new Goods();
         $typeModel = new Type();
-        $data = Redis::get('result');
+//        $data = Redis::get('result');
         if(empty($data)){
             $allGoods = $goodsModel->getAll();
             $allTyoe = $typeModel->getAll();
             $result = $this->classify($allTyoe,$allGoods);
-            Redis::set('result',serialize($result));
+//            Redis::set('result',serialize($result));
         }else{
             $result = unserialize($data);
         }
@@ -45,7 +46,7 @@ class IndexService
         foreach ($type as $k => $v) {
             $i=0;
             foreach ($goods as $key => $val) {
-                if($v['t_id']==$val['tid']){
+                if($v['c_id']==$val['cid']){
                     ++$i;
                     if ($i <= 6){
                         $type[$k]['left'][] = $val;
@@ -105,5 +106,20 @@ class IndexService
             }
         }
         return $arr;
+    }
+
+    /*
+     * 商品详细
+     * */
+    public function getGoodsDetail($id)
+    {
+        $goodsModel = new Goods();
+        return $goodsModel->getOne($id);
+    }
+
+    public function getSku($id)
+    {
+        $model = new Cargo();
+        return $model->getData($id);
     }
 }
